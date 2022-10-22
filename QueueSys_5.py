@@ -1,5 +1,4 @@
 import random as rand
-import sys
 import pandas as pd
 import numpy as np
 
