@@ -1,6 +1,5 @@
  
-- simulate other 5 values 
-- find equation for gg1
+- simulate probability 
 - calculate theoretical parameters in another file by reading values of lambda and mu from csv 
 - add experiment class for change rho and do it more time 
 - 2 plots exp vs thoeretical 
