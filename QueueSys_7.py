@@ -2,13 +2,13 @@ import random as rand
 import pandas as pd
 import numpy as np
 
-pkg_min_gen_time = 2
-pkg_max_gen_time = 3
-server_min_gen_time = 5
-server_max_gen_time = 7
+
+avg_poisson_gen = 3
+avg_poisson_serveing = 3
 
 print_dataframe = True
-simulation_time = 20
+simulation_time = 30
+n_experiments = 1
 
 class Package:
     def __init__(self):
@@ -24,11 +24,6 @@ class Buffer:
 
 class Server:
     def __init__(self):
-        global server_min_gen_time 
-        global server_max_gen_time
-        self.min_time = server_min_gen_time 
-        self.max_time = server_max_gen_time 
-
         self.pkg_serving = None
         self.status = 0
         self.time_to_service = None
@@ -48,7 +43,7 @@ class Server:
         self.pkg_serving = pkg
         pkg.status = 2
 
-        self.time_to_service = rand.randint(self.min_time, self.max_time)
+        self.time_to_service = np.random.poisson(avg_poisson_serveing) + 1
         # save time 
         self.array_serving_times.append(self.time_to_service)
 
@@ -101,14 +96,8 @@ class System():
 
         # start simulation
         self.simulation()
-        # statistics
-        self.calculate_parameters()
 
     def pkg_generation(self):
-        global pkg_min_gen_time 
-        global pkg_max_gen_time
-        min_time = pkg_min_gen_time 
-        max_time = pkg_max_gen_time
         # initialize pkg to none 
         pkg = None
         # generate pkg zero
@@ -119,7 +108,7 @@ class System():
             pkg.status = 0
             self.n_pkgs += 1
 
-            self.inter_arrival_time = rand.randint(min_time, max_time)
+            self.inter_arrival_time = np.random.poisson(avg_poisson_gen) + 1
             # save time
             self.array_interArrival_times.append(self.inter_arrival_time)
 
@@ -134,7 +123,7 @@ class System():
                 self.n_pkgs += 1
 
                 self.generation_progression = 0
-                self.inter_arrival_time = rand.randint(min_time, max_time)
+                self.inter_arrival_time = np.random.poisson(avg_poisson_gen) + 1
                 # save time
                 self.array_interArrival_times.append(self.inter_arrival_time)
 
@@ -164,7 +153,7 @@ class System():
             data_list.append(self.current_time)
             data_list.append(self.inter_arrival_time)
             data_list.append(self.generation_progression)
-            
+
             # --- --- --- start sys call --- --- --- 
             # menage generation 
             pkg = self.pkg_generation()
@@ -174,10 +163,37 @@ class System():
                 pkg.status = 1
                 self.buffer.queue.append(pkg)
             
-            # server call
-            self.server.service(self.buffer, self.pkgs_served)
-            # --- --- --- end sys call --- --- --- 
 
+            
+            # server call
+
+            self.server.service(self.buffer, self.pkgs_served)
+
+
+            # --- --- --- end sys call --- --- --- 
+            
+            '''
+            # --- --- --- start sys call --- --- --- 
+            while True:
+                # menage generation 
+                pkg = self.pkg_generation()
+
+                # manage buffer 
+                if pkg != None:
+                    pkg.status = 1
+                    self.buffer.queue.append(pkg)
+                
+                if self.inter_arrival_time != 0:
+                    break
+            
+            # server call
+            while True:
+                self.server.service(self.buffer, self.pkgs_served)
+                if self.server.time_to_service != 0:
+                    break
+
+            # --- --- --- end sys call --- --- --- 
+            '''
             # calculate how many pks in the system 
             n_pkgsUt_queue = len(self.buffer.queue)
             n_pkgsUt_system = self.server.status + n_pkgsUt_queue
@@ -239,8 +255,8 @@ class System():
         
         if print_dataframe == True:
             pd.set_option('display.max_columns', None)
-            pd.set_option('display.max_columns', None)
-            pd.set_option('display.width', 500)  
+            pd.set_option('display.max_rows', None)
+            pd.set_option('display.width', 300)  
             print(df)
     
     def calculate_parameters(self):
@@ -272,8 +288,37 @@ class System():
         print("Ls: ", Ls)
         print("Wq: ", Wq)
         print("Ws: ", Ws)
+        return sysLambda, sysMu, Lq, Ls, Wq, Ws
 
-        
 
+sysLambda = []
+sysMu = []
+Lq = []
+Ls = []
+Wq = []
+Ws = []
 
-System(simulation_time)
+for i in range(n_experiments):
+    sysLambdaVal, sysMuVal, LqVal, LsVal, WqVal, WsVal = System(simulation_time).calculate_parameters()
+
+    sysLambda.append(sysLambdaVal)
+    sysMu.append(sysMuVal)
+    Lq.append(LqVal)
+    Ls.append(LsVal)
+    Wq.append(WqVal)
+    Ws.append(WsVal)
+
+sysLambdaVal = np.mean(sysLambda)
+sysMyVal = np.mean(sysMu)
+LqVal = np.mean(Lq)
+LsVal = np.mean(Ls)
+WqVal = np.mean(Wq)
+WsVal = np.mean(Ws)
+print(sysLambdaVal)
+print(sysMuVal)
+print(LqVal)
+print(LsVal)
+print(WqVal)
+print(WsVal)
+
+    

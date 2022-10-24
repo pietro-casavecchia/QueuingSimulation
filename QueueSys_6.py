@@ -1,14 +1,16 @@
 import random as rand
 import pandas as pd
 import numpy as np
+import math
 
-pkg_min_gen_time = 2
-pkg_max_gen_time = 3
-server_min_gen_time = 5
-server_max_gen_time = 7
+labda = 0.5
+
+
+server_min_gen_time = 10
+server_max_gen_time = 10
 
 print_dataframe = True
-simulation_time = 20
+simulation_time = 30
 
 class Package:
     def __init__(self):
@@ -85,8 +87,7 @@ class System():
         self.pkgs_served = []
 
         # generation of pkg variabiles
-        self.inter_arrival_time = None
-        self.generation_progression = None
+        self.interArrival_time = None
 
         # generate a buffer and server
         self.buffer = Buffer()
@@ -103,52 +104,53 @@ class System():
         self.simulation()
         # statistics
         self.calculate_parameters()
+    
+    def poisson_arrival(self, labda, interArrival_time):
+        # PDF of tau equal to time 
+        PDF = round(labda * math.pow(math.e, -(labda * interArrival_time)), 2)
+        # simulate probabiliy 
+        throw = rand.randint(0, 100) / 100
+        # test if throw <= then PDF then pkg is generated 
+        if throw <= PDF:
+            print(throw, PDF)
+            return True
+    
+    def generate(self):
+        pkg = Package()
+        pkg.id_number = self.n_pkgs
+        pkg.status = 0
+        self.n_pkgs += 1
+        self.interArrival_time = 0
+        return pkg
 
     def pkg_generation(self):
-        global pkg_min_gen_time 
-        global pkg_max_gen_time
-        min_time = pkg_min_gen_time 
-        max_time = pkg_max_gen_time
+        global labda
+        labda = labda
         # initialize pkg to none 
         pkg = None
         # generate pkg zero
         if self.current_time == 0:
-            # what does it means to generate a pkg an object 
-            pkg = Package()
-            pkg.id_number = self.n_pkgs
-            pkg.status = 0
-            self.n_pkgs += 1
-
-            self.inter_arrival_time = rand.randint(min_time, max_time)
+            pkg = self.generate()
             # save time
-            self.array_interArrival_times.append(self.inter_arrival_time)
-
-            self.generation_progression = 0
-            self.generation_progression += 1
+            self.array_interArrival_times.append(self.interArrival_time)
         elif self.current_time < self.run_time:
-            if self.generation_progression >= self.inter_arrival_time:
-                # then anohter pkg is created 
-                pkg = Package()
-                pkg.id_number = self.n_pkgs
-                pkg.status = 0
-                self.n_pkgs += 1
-
-                self.generation_progression = 0
-                self.inter_arrival_time = rand.randint(min_time, max_time)
+            self.interArrival_time += 1
+            pkg_generated = self.poisson_arrival(labda, self.interArrival_time)
+            print(self.interArrival_time, pkg_generated)
+            if pkg_generated == True:
                 # save time
-                self.array_interArrival_times.append(self.inter_arrival_time)
-
-            self.generation_progression += 1
+                self.array_interArrival_times.append(self.interArrival_time)
+                # then anohter pkg is created and inter time is set to zero 
+                pkg = self.generate()
         elif self.current_time >= self.run_time:
-            self.inter_arrival_time = None
-            self.generation_progression = None
+            self.interArrival_time = None
 
         return pkg 
     
     def simulation(self):
         df = pd.DataFrame(columns = [
             "unitTime", 
-            "interTime", "genProc", "pkgIdGen", 
+            "interTime", "pkgIdGen", 
             "bufferDim", "queue",
             "serverStatus", "pkgIdServ", "servingTime", "serverProc",
             "nPkgsServed", "pkgsServed"])      
@@ -162,8 +164,7 @@ class System():
             # print system
             data_list = []
             data_list.append(self.current_time)
-            data_list.append(self.inter_arrival_time)
-            data_list.append(self.generation_progression)
+            data_list.append(self.interArrival_time)
             
             # --- --- --- start sys call --- --- --- 
             # menage generation 

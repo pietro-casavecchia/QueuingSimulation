@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import random as rand
 import math
 
-lamb = 0.5
+lamb = 0.4
 k = 1
-t = 10
+t = 15
 
 def myPlot(x, y, name):
     plt.plot(x, y, linewidth=1.0, label=name)
