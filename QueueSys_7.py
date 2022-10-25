@@ -3,12 +3,14 @@ import pandas as pd
 import numpy as np
 
 
-avg_poisson_gen = 3
-avg_poisson_serveing = 3
+avg_poisson_gen = 5
+avg_exp_serveing = 4
 
 print_dataframe = True
-simulation_time = 30
-n_experiments = 1
+simulation_time = 250
+n_experiments = 10
+
+save_after_simulation = False
 
 class Package:
     def __init__(self):
@@ -23,7 +25,10 @@ class Buffer:
         return len(self.queue)
 
 class Server:
-    def __init__(self):
+    def __init__(self, run_time, current_time):
+        self.run_time = run_time
+        self.current_time = current_time
+
         self.pkg_serving = None
         self.status = 0
         self.time_to_service = None
@@ -43,9 +48,13 @@ class Server:
         self.pkg_serving = pkg
         pkg.status = 2
 
-        self.time_to_service = np.random.poisson(avg_poisson_serveing) + 1
+        self.time_to_service = np.random.exponential(avg_exp_serveing) + 1
         # save time 
-        self.array_serving_times.append(self.time_to_service)
+        if save_after_simulation == True:
+            self.array_serving_times.append(self.time_to_service)
+        elif save_after_simulation == False:
+            if self.current_time <= self.run_time:
+                self.array_serving_times.append(self.time_to_service)
 
     def service(self, buffer, pkgs_served):
         # if the pkg exits in the buffer 
@@ -85,7 +94,7 @@ class System():
 
         # generate a buffer and server
         self.buffer = Buffer()
-        self.server = Server()
+        self.server = Server(self.run_time, self.current_time)
 
         # parameters
         self.array_interArrival_times = []
@@ -109,8 +118,12 @@ class System():
             self.n_pkgs += 1
 
             self.inter_arrival_time = np.random.poisson(avg_poisson_gen) + 1
-            # save time
-            self.array_interArrival_times.append(self.inter_arrival_time)
+            # save time and decide to save all or only simulation generation time 
+            if save_after_simulation == True:
+                self.array_interArrival_times.append(self.inter_arrival_time)
+            elif save_after_simulation == False:
+                if self.current_time <= self.run_time:
+                    self.array_interArrival_times.append(self.inter_arrival_time)
 
             self.generation_progression = 0
             self.generation_progression += 1
@@ -125,7 +138,11 @@ class System():
                 self.generation_progression = 0
                 self.inter_arrival_time = np.random.poisson(avg_poisson_gen) + 1
                 # save time
-                self.array_interArrival_times.append(self.inter_arrival_time)
+                if save_after_simulation == True:
+                    self.array_interArrival_times.append(self.inter_arrival_time)
+                elif save_after_simulation == False:
+                    if self.current_time <= self.run_time:
+                        self.array_interArrival_times.append(self.inter_arrival_time)
 
             self.generation_progression += 1
         elif self.current_time >= self.run_time:
@@ -194,31 +211,38 @@ class System():
 
             # --- --- --- end sys call --- --- --- 
             '''
-            # calculate how many pks in the system 
-            n_pkgsUt_queue = len(self.buffer.queue)
-            n_pkgsUt_system = self.server.status + n_pkgsUt_queue
-            self.array_pkgsUt_queue.append(n_pkgsUt_queue)
-            self.array_pkgsUt_system.append(n_pkgsUt_system)
-            # calculate how long a pkg in the queue
-            for i in range(len(self.buffer.queue)):
-                # get value of  pkg 
-                value_queue_pkg = self.dict_pkgsTime_queue.get(self.buffer.queue[i].id_number)
-                # if is none set to 1 else increment by 1 
-                if value_queue_pkg == None:
-                    self.dict_pkgsTime_queue.update({self.buffer.queue[i].id_number: 1})
-                else:
-                    self.dict_pkgsTime_queue.update({self.buffer.queue[i].id_number: value_queue_pkg + 1})
-            # calculate how long a pkg in the server 
-            # read the value in the server 
-            #   check if already exits in the dict then add 1 else increase by one 
-            if self.server.pkg_serving != None:
-                # search it in the 
-                value_server_pkg = self.dict_pkgsTime_system.get(self.server.pkg_serving.id_number)
-                if value_server_pkg == None:
-                    self.dict_pkgsTime_system.update({self.server.pkg_serving.id_number: 1})
-                else:
-                    self.dict_pkgsTime_system.update({self.server.pkg_serving.id_number: value_server_pkg + 1})
-                
+            def sys_info():
+                # calculate how many pks in the system 
+                n_pkgsUt_queue = len(self.buffer.queue)
+                n_pkgsUt_system = self.server.status + n_pkgsUt_queue
+                self.array_pkgsUt_queue.append(n_pkgsUt_queue)
+                self.array_pkgsUt_system.append(n_pkgsUt_system)
+                # calculate how long a pkg in the queue
+                for i in range(len(self.buffer.queue)):
+                    # get value of  pkg 
+                    value_queue_pkg = self.dict_pkgsTime_queue.get(self.buffer.queue[i].id_number)
+                    # if is none set to 1 else increment by 1 
+                    if value_queue_pkg == None:
+                        self.dict_pkgsTime_queue.update({self.buffer.queue[i].id_number: 1})
+                    else:
+                        self.dict_pkgsTime_queue.update({self.buffer.queue[i].id_number: value_queue_pkg + 1})
+                # calculate how long a pkg in the server 
+                # read the value in the server 
+                #   check if already exits in the dict then add 1 else increase by one 
+                if self.server.pkg_serving != None:
+                    # search it in the 
+                    value_server_pkg = self.dict_pkgsTime_system.get(self.server.pkg_serving.id_number)
+                    if value_server_pkg == None:
+                        self.dict_pkgsTime_system.update({self.server.pkg_serving.id_number: 1})
+                    else:
+                        self.dict_pkgsTime_system.update({self.server.pkg_serving.id_number: value_server_pkg + 1})
+            
+            if save_after_simulation == True:
+                sys_info()
+            elif save_after_simulation == False:
+                if self.current_time <= self.run_time:
+                    sys_info()
+                    
             # --- --- --- print end of unit time --- --- ---
             # print pkg
             if pkg == None: data_list.append(None)

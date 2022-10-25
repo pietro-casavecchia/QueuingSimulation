@@ -7,6 +7,7 @@ lamb = 0.12
 k = 3
 
 def myPlot(x, y):
+    
     plt.plot(x, y, color=(0, 0, 0), linewidth=1.0)
     plt.grid(linewidth = 0.5)
     
