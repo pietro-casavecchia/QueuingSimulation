@@ -10,12 +10,13 @@ import numpy as np
 import math
 
 # costant serving variable
+avg_exp_generation = 6
 avg_exp_serving = 5
 
 # system variables 
-print_dataframe = False
-print_graphs = False
-simulation_time = 2000
+print_dataframe = True
+print_graphs = True
+simulation_time = 30
 n_experiments = 1
 
 class Package:
@@ -270,12 +271,7 @@ class System():
             self.array_P01
             )
 
-# array for multiple rho 
-n_Rho = []
-Ls_fnRho = []
-Lq_fnRho = []
-Ws_fnRho = []
-Wq_fnRho = []
+
 # array for multiple experiments
 experiment_no = []
 # variable for avg of every exp 
@@ -289,97 +285,92 @@ array_Lq = []
 array_Ws = []
 array_Wq = []
 array_P0 = []
-for r in range(100):
-    avg_exp_generation = 25 - (r * 0.2)
-    n_Rho.append(round((avg_exp_serving / avg_exp_generation), 2))
-    for i in range(n_experiments):
-        # unit time for plot 
-        experiment_no.append(i)
 
-        (   array_inter_arrival_time,
-            array_serving_time,
-            pkgs_sys_for_unitTime, 
-            pkgs_queue_for_unitTime,
-            array_waitingTime_server,
-            array_waitingTime_queue,
-            array_P01
-            ) = System(simulation_time, avg_exp_generation).calculate_parameters()
+for i in range(n_experiments):
+    # unit time for plot 
+    experiment_no.append(i)
 
-        # calculate exp values
-        avg_interArrival = np.mean(array_inter_arrival_time)
-        avg_serving = np.mean(array_serving_time)
-        Lambda = 1 / avg_interArrival
-        Mu = 1 / avg_serving
-        Rho = Lambda / Mu
-        Ls = np.mean(pkgs_sys_for_unitTime)
-        Lq = np.mean(pkgs_queue_for_unitTime)
-        Wq = np.mean(array_waitingTime_queue)
-        Ws = Wq + np.mean(array_waitingTime_server)
-        P0 = array_P01[0] / (array_P01[0] + array_P01[1])
+    (   array_inter_arrival_time,
+        array_serving_time,
+        pkgs_sys_for_unitTime, 
+        pkgs_queue_for_unitTime,
+        array_waitingTime_server,
+        array_waitingTime_queue,
+        array_P01
+        ) = System(simulation_time, avg_exp_generation).calculate_parameters()
 
-        # append for avg exp 
-        array_IA.append(avg_interArrival)
-        array_S.append(avg_serving)
-        array_Lambda.append(Lambda)
-        array_Mu.append(Mu)
-        array_Rho.append(Rho)
-        array_Ls.append(Ls)
-        array_Lq.append(Lq)
-        array_Ws.append(Ws)
-        array_Wq.append(Wq)
-        array_P0.append(P0)
+    # calculate exp values
+    avg_interArrival = np.mean(array_inter_arrival_time)
+    avg_serving = np.mean(array_serving_time)
+    Lambda = 1 / avg_interArrival
+    Mu = 1 / avg_serving
+    Rho = Lambda / Mu
+    Ls = np.mean(pkgs_sys_for_unitTime)
+    Lq = np.mean(pkgs_queue_for_unitTime)
+    Wq = np.mean(array_waitingTime_queue)
+    Ws = Wq + np.mean(array_waitingTime_server)
+    P0 = array_P01[0] / (array_P01[0] + array_P01[1])
 
-        # calculate theo values 
-        Lambda_theo = 1 / avg_exp_generation
-        Mu_theo = 1 / avg_exp_serving
-        Rho_theo = Lambda_theo / Mu_theo
-        Ls_theo = Rho_theo / (1 - Rho_theo)
-        Lq_theo = (Lambda_theo**2) / (Mu_theo * (Mu_theo - Lambda_theo))
-        Ws_theo = 1 / (Mu_theo - Lambda_theo)
-        Wq_theo = Lambda_theo / (Mu_theo * (Mu_theo - Lambda_theo))
-        P0_theo = 1 - Rho_theo
+    # append for avg exp 
+    array_IA.append(avg_interArrival)
+    array_S.append(avg_serving)
+    array_Lambda.append(Lambda)
+    array_Mu.append(Mu)
+    array_Rho.append(Rho)
+    array_Ls.append(Ls)
+    array_Lq.append(Lq)
+    array_Ws.append(Ws)
+    array_Wq.append(Wq)
+    array_P0.append(P0)
 
-        '''print("*** *** Theo Values *** ***")
-        print("avg InterArrival theo: ", avg_exp_generation)
-        print("avg Serving theo: ", avg_exp_serving)
-        print("Lambda theo: ", round(Lambda_theo, 2))
-        print("Mu theo: ", round(Mu_theo, 2))
-        print("Rho theo: ", round(Rho_theo, 2))
-        print("Ls theo: ", round(Ls_theo, 2))
-        print("Lq theo: ", round(Lq_theo, 2))
-        print("Ws theo: ", round(Ws_theo, 2))
-        print("Wq theo: ", round(Wq_theo, 2))
-        print("P0 theo: ", round(P0_theo, 2))
+    # calculate theo values 
+    Lambda_theo = 1 / avg_exp_generation
+    Mu_theo = 1 / avg_exp_serving
+    Rho_theo = Lambda_theo / Mu_theo
+    Ls_theo = Rho_theo / (1 - Rho_theo)
+    Lq_theo = (Lambda_theo**2) / (Mu_theo * (Mu_theo - Lambda_theo))
+    Ws_theo = 1 / (Mu_theo - Lambda_theo)
+    Wq_theo = Lambda_theo / (Mu_theo * (Mu_theo - Lambda_theo))
+    P0_theo = 1 - Rho_theo
 
-        print("--- --- --- --- --- --- --- --- --- Cry --- --- --- Smile --- --- --- CHAD --- --- --- ;))")
+    print(i)
+    print("--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---")
+    print("*** *** Theo Values *** ***")
+    print("avg InterArrival theo: ", avg_exp_generation)
+    print("avg Serving theo: ", avg_exp_serving)
+    print("Lambda theo: ", round(Lambda_theo, 2))
+    print("Mu theo: ", round(Mu_theo, 2))
+    print("Rho theo: ", round(Rho_theo, 2))
+    print("Ls theo: ", round(Ls_theo, 2))
+    print("Lq theo: ", round(Lq_theo, 2))
+    print("Ws theo: ", round(Ws_theo, 2))
+    print("Wq theo: ", round(Wq_theo, 2))
+    print("P0 theo: ", round(P0_theo, 2))
+    print("*** *** Experimental Values *** ***")
+    print("avg InterArrival: ", round(avg_interArrival, 2))
+    print("avg serving: ", round(avg_serving, 2))
+    print("Lambda: ", round(Lambda, 2))
+    print("Mu: ", round(Mu, 2))
+    print("Rho: ", round(Rho, 2))
+    print("Ls: ", round(Ls, 2))
+    print("Lq: ", round(Lq, 2))
+    print("Ws: ", round(Ws, 2))
+    print("Wq: ", round(Wq, 2))
+    print("P0: ", round(P0, 2))
 
-        print("*** *** Experimental Values *** ***")
-        print("avg InterArrival: ", round(avg_interArrival, 2))
-        print("avg serving: ", round(avg_serving, 2))
-        print("Lambda: ", round(Lambda, 2))
-        print("Mu: ", round(Mu, 2))
-        print("Rho: ", round(Rho, 2))
-        print("Ls: ", round(Ls, 2))
-        print("Lq: ", round(Lq, 2))
-        print("Ws: ", round(Ws, 2))
-        print("Wq: ", round(Wq, 2))
-        print("P0: ", round(P0, 2))'''
+    # prints of hist and Ls of 1 experiment
+    if print_graphs == True:
+        plt.hist(array_serving_time, bins=30) 
+        plt.hist(array_inter_arrival_time, bins=30) 
+        plt.show() 
 
-        print(i)
+        ut = []
+        for i in range(len(pkgs_sys_for_unitTime)):
+            ut.append(i)
 
-        # prints of hist and Ls of 1 experiment
-        if print_graphs == True:
-            plt.hist(array_serving_time, bins=30) 
-            plt.hist(array_inter_arrival_time, bins=30) 
-            plt.show() 
-
-            ut = []
-            for i in range(len(pkgs_sys_for_unitTime)):
-                ut.append(i)
-
-            plt.plot(ut, pkgs_sys_for_unitTime, color=(0, 0, 0), linewidth=1.0)
-            plt.grid(linewidth = 0.5)
-            plt.show()
+        plt.plot(ut, pkgs_sys_for_unitTime, color=(0, 0, 0), linewidth=1.0)
+        plt.grid(linewidth = 0.5)
+        plt.show()
 
     # --- --- --- out avg result for n experiment --- --- ---
 
@@ -388,20 +379,14 @@ for r in range(100):
     out_Lambda = round(np.mean(array_Lambda), 3)
     out_Mu = round(np.mean(array_Mu), 3)
     out_Rho = round(np.mean(array_Rho), 3)
-    out_Ls = round(np.mean(array_Ls), 3) if round(np.mean(array_Ls), 3) != None else 0
-    out_Lq = round(np.mean(array_Lq), 3) if round(np.mean(array_Lq), 3) != None else 0
-    out_Ws = round(np.mean(array_Ws), 3) if round(np.mean(array_Ws), 3) != None else 0
-    out_Wq = round(np.mean(array_Wq), 3) if round(np.mean(array_Wq), 3) != None else 0
+    out_Ls = round(np.mean(array_Ls), 3) 
+    out_Lq = round(np.mean(array_Lq), 3) 
+    out_Ws = round(np.mean(array_Ws), 3)
+    out_Wq = round(np.mean(array_Wq), 3) 
     out_P0 = round(np.mean(array_P0), 3) 
 
-    # append for graph in fn of Rho 
-    Ls_fnRho.append(out_Ls)
-    Lq_fnRho.append(out_Lq)
-    Ws_fnRho.append(out_Ws)
-    Wq_fnRho.append(out_Wq)
-
     # calculate percentage error 
-    '''error_IA = math.floor(abs(avg_exp_generation - out_IA) / avg_exp_generation * 100)
+    error_IA = math.floor(abs(avg_exp_generation - out_IA) / avg_exp_generation * 100)
     error_S = math.floor(abs(avg_exp_serving - out_S) / avg_exp_serving * 100)
     error_Lambda = math.floor(abs(Lambda_theo - out_Lambda) / Lambda_theo * 100)
     error_Mu = math.floor(abs(Mu_theo - out_Mu) / Mu_theo * 100)
@@ -410,9 +395,9 @@ for r in range(100):
     error_Lq = math.floor(abs(Lq_theo - out_Lq) / Lq_theo * 100)
     error_Ws = math.floor(abs(Ws_theo - out_Ws) / Ws_theo * 100)
     error_Wq = math.floor(abs(Wq_theo - out_Wq) / Wq_theo * 100)
-    error_P0 = math.floor(abs(P0_theo - out_P0) / P0_theo * 100)'''
+    error_P0 = math.floor(abs(P0_theo - out_P0) / P0_theo * 100)
 
-    '''print("IA theo: {} IA out: {} error: {}".format(avg_exp_generation, out_IA, error_IA))
+    print("IA theo: {} IA out: {} error: {}".format(avg_exp_generation, out_IA, error_IA))
     print("S theo: {} S out: {} error: {}".format(avg_exp_serving, out_S, error_S))
     print("Lambda theo: {} Lambda out: {} error: {}".format(round(Lambda_theo, 3), out_Lambda, error_Lambda))
     print("Mu theo: {} Mu out: {} error: {}".format(round(Mu_theo, 3), out_Mu, error_Mu))
@@ -422,19 +407,4 @@ for r in range(100):
     print("Ws theo: {} Ws out: {} error: {}".format(round(Ws_theo, 3), out_Ws, error_Ws))
     print("Wq theo: {} Wq out: {} error: {}".format(round(Wq_theo, 3), out_Wq, error_Wq))
     print("P0 theo: {} P0 out: {} error: {}".format(round(P0_theo, 3), out_P0, error_P0))
-'''
 
-
-def myPlot(x, y, name):
-    plt.plot(x, y, linewidth=1.0, label=name)
-    plt.legend(loc="upper left")
-    plt.grid(linewidth = 0.5)
-
-
-myPlot(n_Rho, Ls_fnRho, "Ls")
-myPlot(n_Rho, Lq_fnRho, "Lq")
-plt.show()
-
-myPlot(n_Rho, Ws_fnRho, "Ws")
-myPlot(n_Rho, Wq_fnRho, "Wq")
-plt.show()
