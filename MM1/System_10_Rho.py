@@ -10,8 +10,8 @@ import math
 
 # costant serving variable
 S = 5
-max_IA = 25
-interval = 0.2
+max_IA = 35
+interval = 1
 
 # system variables 
 print_dataframe = False
@@ -160,22 +160,12 @@ class System():
 
             # --- --- --- start sys call --- --- --- 
 
-            # if inter arrivale time == 0 then re generate a pkg be calling recursivly the function 
-            while True:
-                # menage generation 
-                pkg = self.pkg_generation()
-                # manage buffer 
-                if pkg != None: self.buffer.queue.append(pkg)
-                # contiue to append in the same UT until the gen time is 0
-                if self.inter_arrival_time != 0:
-                    break
-            
+            # menage generation 
+            pkg = self.pkg_generation()
+            # manage buffer 
+            if pkg != None: self.buffer.queue.append(pkg)
             # manage server
-            while True:
-                self.server.service(self.buffer, self.pkgs_served)
-                # cuntinue to serve while the service time is 0
-                if self.server.serving_time != 0:
-                    break
+            self.server.service(self.buffer, self.pkgs_served)
 
             # --- --- --- end sys call --- --- --- 
 

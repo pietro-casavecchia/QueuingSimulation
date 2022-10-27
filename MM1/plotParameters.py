@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import math
 
 S = 5
-max_IA = 35
-interval = 0.2
+max_IA = 50
+interval = 0.1
 
 array_Rho = []
 array_Ls = []
@@ -11,8 +11,7 @@ array_Lq = []
 array_Ws = []
 array_Wq = []
 
-
-def multiPlot(x, y_1, y_2, y_3, y_4, name_1, name_2, name_3, name_4):
+def multiPlotLog(x, y_1, y_2, y_3, y_4, name_1, name_2, name_3, name_4):
     figure, axis = plt.subplots(2, figsize=(5, 7))
     axis[0].plot(x, y_1, linewidth=1.0, label=name_1)
     axis[0].plot(x, y_2, linewidth=1.0, label=name_2)
@@ -22,6 +21,18 @@ def multiPlot(x, y_1, y_2, y_3, y_4, name_1, name_2, name_3, name_4):
     axis[1].plot(x, y_3, linewidth=1.0, label=name_3)
     axis[1].plot(x, y_4, linewidth=1.0, label=name_4)
     axis[1].set_yscale('log')
+    axis[1].grid(linewidth = 0.5)
+    axis[1].legend(loc="upper left")
+    plt.show()
+
+def multiPlotScale(x, y_1, y_2, y_3, y_4, name_1, name_2, name_3, name_4):
+    figure, axis = plt.subplots(2, figsize=(5, 7))
+    axis[0].plot(x, y_1, linewidth=1.0, label=name_1)
+    axis[0].plot(x, y_2, linewidth=1.0, label=name_2)
+    axis[0].grid(linewidth = 0.5)
+    axis[0].legend(loc="upper left")
+    axis[1].plot(x, y_3, linewidth=1.0, label=name_3)
+    axis[1].plot(x, y_4, linewidth=1.0, label=name_4)
     axis[1].grid(linewidth = 0.5)
     axis[1].legend(loc="upper left")
     plt.show()
@@ -46,8 +57,15 @@ for i in range(steps - 1):
     array_Ws.append(Ws)
     array_Wq.append(Wq)
 
+multiPlotLog(
+    array_Rho, 
+    array_Ls, 
+    array_Lq, 
+    array_Ws, 
+    array_Wq, 
+    "Ls", "Lq", "Ws", "Wq",)
 
-multiPlot(
+multiPlotScale(
     array_Rho, 
     array_Ls, 
     array_Lq, 

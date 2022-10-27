@@ -333,8 +333,7 @@ for i in range(n_experiments):
     Wq_theo = Lambda_theo / (Mu_theo * (Mu_theo - Lambda_theo))
     P0_theo = 1 - Rho_theo
 
-    print(i)
-    print("--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---")
+    print("--- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---", i)
     print("*** *** Theo Values *** ***")
     print("avg InterArrival theo: ", avg_exp_generation)
     print("avg Serving theo: ", avg_exp_serving)
