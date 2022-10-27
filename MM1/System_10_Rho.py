@@ -1,6 +1,8 @@
 
 '''
-
+No zero
+Loop Rho
+Quadri plot
 '''
 
 import matplotlib.pyplot as plt
@@ -9,8 +11,8 @@ import numpy as np
 import math
 
 # costant serving variable
-S = 5
-max_IA = 35
+S = 2
+max_IA = 10
 interval = 1
 
 # system variables 
@@ -50,8 +52,11 @@ class Server:
         self.status = 1
         self.pkg_serving = pkg
 
-        # generate a serving time 
-        self.serving_time =  math.floor(np.random.exponential(S))
+        # generate a serving time > 0
+        while True:
+            self.serving_time =  math.floor(np.random.exponential(S))
+            if self.serving_time > 0:
+                break
         # initiate service progression 
         self.service_progression = 0
 
@@ -60,22 +65,23 @@ class Server:
     
     def service(self, buffer, pkgs_served):
         # if status of the server is zero and a pkg in the buffer exits then move the pkg into the server
-        if self.status == 0 and buffer.calculate_buffer_size() > 0:
+        if self.status == 0 and buffer.calculate_buffer_size() == 0:
+            # erase pkg given exited the server 
+            self.pkg_serving = None
+            # empty the server 
+            self.serving_time = None
+            self.service_progression = None
+        elif self.status == 0 and buffer.calculate_buffer_size() > 0:
             self.from_buffer_to_server(buffer)
-        
+    
         # if the serving time == 0 then after the from_buffer...() call the status will be 1 
         if self.status == 1:
             self.service_progression += 1
             if self.service_progression >= self.serving_time:
-                # empty the server 
-                self.status = 0
-                self.serving_time = None
-                self.service_progression = None
-
                 # append in pkgs served
                 pkgs_served.append(self.pkg_serving)
-                # erase pkg given exited the server 
-                self.pkg_serving = None
+
+                self.status = 0
 
 class System():
     def __init__(self, run_time, avg_exp_generation):
@@ -120,8 +126,11 @@ class System():
                 pkg = Package()
                 pkg.id_number = self.n_pkgs
                 self.n_pkgs += 1
-                # start inter arrival time 
-                self.inter_arrival_time = math.floor(np.random.exponential(IA)) 
+                # inter arrival time > 0
+                while True:
+                    self.inter_arrival_time = math.floor(np.random.exponential(self.avg_exp_generation)) 
+                    if  self.inter_arrival_time > 0:
+                        break
                 # set generation progression to zero for initialize it 
                 self.generation_progression = 0
 
@@ -452,6 +461,79 @@ multiPlotLog(
     Lq_fnRho, 
     Ws_fnRho, 
     Wq_fnRho, 
-    "Ls", "Lq", "Ws", "Wq",)
+    "Ls", "Lq", "Ws", "Wq")
 
 
+# Theo with Experiemnt plot
+# Theo calculation 
+array_Plot_Rho = []
+array_Plot_Ls = []
+array_Plot_Lq = []
+array_Plot_Ws = []
+array_Plot_Wq = []
+# Reset to starting value IA
+IA = max_IA
+for i in range(steps - 1):
+    IA -= interval
+    Plot_Lambda = round((1 / IA), 3)
+    Plot_Mu = round((1 / S), 3)
+    Plot_Rho = round((Plot_Lambda / Plot_Mu), 3)
+
+    Plot_Ls = round((Plot_Rho / (1 - Plot_Rho)), 3)
+    Plot_Lq = round((Plot_Lambda**2 / (Plot_Mu * (Plot_Mu - Plot_Lambda))), 3)
+    Plot_Ws = round((1 / (Plot_Mu - Plot_Lambda)), 3) 
+    Plot_Wq = round((Plot_Lambda / (Plot_Mu * (Plot_Mu - Plot_Lambda))), 3) 
+
+    array_Plot_Rho.append(Plot_Rho)
+    array_Plot_Ls.append(Plot_Ls)
+    array_Plot_Lq.append(Plot_Lq)
+    array_Plot_Ws.append(Plot_Ws)
+    array_Plot_Wq.append(Plot_Wq)
+
+def quardiPlotLog(
+    x, 
+    Ls, Ls_e,
+    Lq, Lq_e,
+    Ws, Ws_e,
+    Wq, Wq_e,
+    name_Ls, name_Ls_e,
+    name_Lq, name_Lq_e,
+    name_Ws, name_Ws_e,
+    name_Wq, name_Wq_e):
+    figure, axis = plt.subplots(2, 2, figsize=(7, 7))
+    # Ls
+    axis[0, 0].plot(x, Ls, linewidth=1.0, label=name_Ls)
+    axis[0, 0].plot(x, Ls_e, linewidth=1.0, label=name_Ls_e)
+    axis[0, 0].set_yscale('log')
+    axis[0, 0].grid(linewidth = 0.5)
+    axis[0, 0].legend(loc="lower right")
+    # Lq
+    axis[0, 1].plot(x, Lq, linewidth=1.0, label=name_Lq)
+    axis[0, 1].plot(x, Lq_e, linewidth=1.0, label=name_Lq_e)
+    axis[0, 1].set_yscale('log')
+    axis[0, 1].grid(linewidth = 0.5)
+    axis[0, 1].legend(loc="lower right")
+    # Ws
+    axis[1, 0].plot(x, Ws, linewidth=1.0, label=name_Ws)
+    axis[1, 0].plot(x, Ws_e, linewidth=1.0, label=name_Ws_e)
+    axis[1, 0].set_yscale('log')
+    axis[1, 0].grid(linewidth = 0.5)
+    axis[1, 0].legend(loc="lower right")
+    # Wq
+    axis[1, 1].plot(x, Wq, linewidth=1.0, label=name_Wq)
+    axis[1, 1].plot(x, Wq_e, linewidth=1.0, label=name_Wq_e)
+    axis[1, 1].set_yscale('log')
+    axis[1, 1].grid(linewidth = 0.5)
+    axis[1, 1].legend(loc="lower right")
+    plt.show()
+
+quardiPlotLog(
+    n_Rho, 
+    array_Plot_Ls, Ls_fnRho,
+    array_Plot_Lq, Lq_fnRho, 
+    array_Plot_Ws, Ws_fnRho, 
+    array_Plot_Wq, Wq_fnRho, 
+    "Ls", "Ls_e",
+    "Lq", "Lq_e",
+    "Ws", "Ws_e",
+    "Wq", "Wq_e")

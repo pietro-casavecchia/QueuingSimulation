@@ -4,21 +4,20 @@ No zero
 Loop experiments
 '''
 
-from ast import While
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import math
 
 # costant serving variable
-avg_exp_generation = 6
-avg_exp_serving = 5
+avg_exp_generation = 20
+avg_exp_serving = 2
 
 # system variables 
-print_dataframe = True
-print_graphs = True
-simulation_time = 30
-n_experiments = 1
+print_dataframe = False
+print_graphs = False
+simulation_time = 1000
+n_experiments = 5
 
 class Package:
     def __init__(self):
@@ -64,22 +63,23 @@ class Server:
     
     def service(self, buffer, pkgs_served):
         # if status of the server is zero and a pkg in the buffer exits then move the pkg into the server
-        if self.status == 0 and buffer.calculate_buffer_size() > 0:
+        if self.status == 0 and buffer.calculate_buffer_size() == 0:
+            # erase pkg given exited the server 
+            self.pkg_serving = None
+            # empty the server 
+            self.serving_time = None
+            self.service_progression = None
+        elif self.status == 0 and buffer.calculate_buffer_size() > 0:
             self.from_buffer_to_server(buffer)
-        
+    
         # if the serving time == 0 then after the from_buffer...() call the status will be 1 
         if self.status == 1:
             self.service_progression += 1
             if self.service_progression >= self.serving_time:
-                # empty the server 
-                self.status = 0
-                self.serving_time = None
-                self.service_progression = None
-
                 # append in pkgs served
                 pkgs_served.append(self.pkg_serving)
-                # erase pkg given exited the server 
-                self.pkg_serving = None
+
+                self.status = 0
 
 class System():
     def __init__(self, run_time, avg_exp_generation):

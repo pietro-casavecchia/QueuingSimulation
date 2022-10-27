@@ -1,15 +1,15 @@
 import matplotlib.pyplot as plt
 import math
 
-S = 5
-max_IA = 50
-interval = 0.1
+S = 2
+max_IA = 10
+interval = 1
 
-array_Rho = []
-array_Ls = []
-array_Lq = []
-array_Ws = []
-array_Wq = []
+array_Plot_Rho = []
+array_Plot_Ls = []
+array_Plot_Lq = []
+array_Plot_Ws = []
+array_Plot_Wq = []
 
 def multiPlotLog(x, y_1, y_2, y_3, y_4, name_1, name_2, name_3, name_4):
     figure, axis = plt.subplots(2, figsize=(5, 7))
@@ -42,36 +42,36 @@ steps = math.floor((max_IA - S) / interval)
 IA = max_IA
 for i in range(steps - 1):
     IA -= interval
-    Lambda = round((1 / IA), 3)
-    Mu = round((1 / S), 3)
-    Rho = round((Lambda / Mu), 3)
+    Plot_Lambda = round((1 / IA), 3)
+    Plot_Mu = round((1 / S), 3)
+    Plot_Rho = round((Plot_Lambda / Plot_Mu), 3)
 
-    Ls = round((Rho / (1 - Rho)), 3)
-    Lq = round((Lambda**2 / (Mu * (Mu - Lambda))), 3)
-    Ws = round((1 / (Mu - Lambda)), 3) 
-    Wq = round((Lambda / (Mu * (Mu - Lambda))), 3) 
+    Plot_Ls = round((Plot_Rho / (1 - Plot_Rho)), 3)
+    Plot_Lq = round((Plot_Lambda**2 / (Plot_Mu * (Plot_Mu - Plot_Lambda))), 3)
+    Plot_Ws = round((1 / (Plot_Mu - Plot_Lambda)), 3) 
+    Plot_Wq = round((Plot_Lambda / (Plot_Mu * (Plot_Mu - Plot_Lambda))), 3) 
 
-    array_Rho.append(Rho)
-    array_Ls.append(Ls)
-    array_Lq.append(Lq)
-    array_Ws.append(Ws)
-    array_Wq.append(Wq)
+    array_Plot_Rho.append(Plot_Rho)
+    array_Plot_Ls.append(Plot_Ls)
+    array_Plot_Lq.append(Plot_Lq)
+    array_Plot_Ws.append(Plot_Ws)
+    array_Plot_Wq.append(Plot_Wq)
 
 multiPlotLog(
-    array_Rho, 
-    array_Ls, 
-    array_Lq, 
-    array_Ws, 
-    array_Wq, 
-    "Ls", "Lq", "Ws", "Wq",)
+    array_Plot_Rho, 
+    array_Plot_Ls, 
+    array_Plot_Lq, 
+    array_Plot_Ws, 
+    array_Plot_Wq, 
+    "Ls", "Lq", "Ws", "Wq")
 
 multiPlotScale(
-    array_Rho, 
-    array_Ls, 
-    array_Lq, 
-    array_Ws, 
-    array_Wq, 
-    "Ls", "Lq", "Ws", "Wq",)
+    array_Plot_Rho, 
+    array_Plot_Ls, 
+    array_Plot_Lq, 
+    array_Plot_Ws, 
+    array_Plot_Wq, 
+    "Ls", "Lq", "Ws", "Wq")
     
 
 
