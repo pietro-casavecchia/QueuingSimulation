@@ -2,6 +2,8 @@
 '''
 No zero 
 Loop experiments
+No runtime 
+Better calculation W
 '''
 
 import matplotlib.pyplot as plt
@@ -10,16 +12,16 @@ import numpy as np
 import math
 
 # costant serving variable
-IA = 5
-S = 3
+IA = 4
+S = 3.5
 
 # system variables 
-print_dataframe = True
-print_graphs = True
-simulation_time = 30
+print_dataframe = False
+print_graphs = False
+simulation_time = 1000
 n_experiments = 1
 
-np.random.seed(42)
+# np.random.seed(42)
 
 class Package:
     def __init__(self):
@@ -153,13 +155,15 @@ class System():
             "queue", "bufferDim",
             "serverStatus", "pkgIdServ", "servingTime", "serverProc",
             "nPkgsServed", "pkgsServed"])      
-
-        # continue the process until all pks are served 
-        while (
+        
+        '''while (
             (self.current_time < self.run_time) or 
             (self.buffer.calculate_buffer_size() > 0) or 
             (self.server.status != 0)
-            ):
+            ):'''
+
+        # continue the process until all pks are served 
+        while (self.current_time < self.run_time):
 
             # print system
             data_list = []
@@ -253,10 +257,37 @@ class System():
         # take the value from the dict of waiting time in the server / queue
         array_waitingTime_queue = []
         array_waitingTime_server = []
-        for values in self.dict_pkgsTime_queue.values():
-            array_waitingTime_queue.append(values)
-        for values in self.dict_pkgsTime_system.values():
-            array_waitingTime_server.append(values)
+        for values_q in self.dict_pkgsTime_queue.values():
+            array_waitingTime_queue.append(values_q)
+        # adjust with adding 1 for mean for missing pks 
+        for _ in range(self.n_pkgs - len(array_waitingTime_queue)):
+            array_waitingTime_queue.append(0)
+
+        for values_s in self.dict_pkgsTime_system.values():
+            array_waitingTime_server.append(values_s)
+        # adjust with adding 1 for mean for missing pks 
+        for _ in range(self.n_pkgs - len(array_waitingTime_server)):
+            array_waitingTime_server.append(0)
+
+        
+
+        '''print(array_waitingTime_queue)
+        print(len(array_waitingTime_queue))
+        print(np.mean(array_waitingTime_queue))'''
+        '''print()
+        print(array_waitingTime_queue)
+        print(len(array_waitingTime_queue))
+        print(np.mean(array_waitingTime_queue))
+        print(self.dict_pkgsTime_queue)
+        print(self.n_pkgs)
+        new_array = array_waitingTime_queue
+        for n in range(self.n_pkgs - len(array_waitingTime_queue)):
+            print("yesdkjlf")
+            new_array.append(0.3)
+        print(new_array)
+        print(len(new_array))
+        print(np.mean(new_array))
+        print()'''
 
         return (
             self.array_inter_arrival_time,

@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import math
 
 S = 2
-max_IA = 10
-interval = 1
+max_IA = 30
+interval = 0.1
 
 array_Plot_Rho = []
 array_Plot_Ls = []

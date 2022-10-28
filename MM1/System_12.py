@@ -7,22 +7,19 @@ need to wait one for the server
 '''
 
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
 import math
 
 # costant serving variable
-S = 1
-max_IA = 10
+S = 5
+max_IA = 25
 interval = 0.5
 
 # system variables 
 print_dataframe = False
 print_graphs = False
-simulation_time = 1000
-n_experiments = 3
-
-# np.random.seed(42)
+simulation_time = 40000
+n_experiments = 2
 
 class Package:
     def __init__(self):
@@ -81,7 +78,7 @@ class Server:
         # if the serving time == 0 then after the from_buffer...() call the status will be 1 
         if self.status == 1:
             self.service_progression += 1
-            if self.service_progression >= self.serving_time:
+            if self.service_progression > self.serving_time:
                 # append in pkgs served
                 pkgs_served.append(self.pkg_serving)
 
@@ -125,16 +122,16 @@ class System():
             # generate pkg zero
             if (
                 (self.current_time == 0) or 
-                (self.generation_progression > self.inter_arrival_time)
+                (self.generation_progression >= self.inter_arrival_time)
                 ):
                 pkg = Package()
                 pkg.id_number = self.n_pkgs
                 self.n_pkgs += 1
                 # inter arrival time > 0
                 while True:
-                    # self.inter_arrival_time = math.floor(np.random.exponential(self.IA)) 
-                    self.inter_arrival_time = np.random.poisson(self.IA)
-                    if  self.inter_arrival_time > 0:
+                    self.inter_arrival_time = math.floor(np.random.exponential(self.IA))
+                    # self.inter_arrival_time = np.random.poisson(self.IA)
+                    if self.inter_arrival_time > 0:
                         break
                 # set generation progression to zero for initialize it 
                 self.generation_progression = 0
@@ -151,14 +148,7 @@ class System():
         
         return pkg 
         
-    def simulation(self):
-        df = pd.DataFrame(columns = [
-            "unitTime", 
-            "interTime", "genProc", "pkgIdGen", 
-            "queue", "bufferDim",
-            "serverStatus", "pkgIdServ", "servingTime", "serverProc",
-            "nPkgsServed", "pkgsServed"])      
-
+    def simulation(self): 
 
         '''while (
             (self.current_time < self.run_time) or 
@@ -168,12 +158,6 @@ class System():
 
         # continue the process until all pks are served 
         while (self.current_time < self.run_time):
-
-            # print system
-            data_list = []
-            data_list.append(self.current_time)
-            data_list.append(self.inter_arrival_time)
-            data_list.append(self.generation_progression)
 
             # --- --- --- start sys call --- --- --- 
 
@@ -187,37 +171,7 @@ class System():
             # --- --- --- end sys call --- --- --- 
 
             # --- --- --- start print --- --- ---
-            # print pkg
-            if pkg == None: data_list.append(None)
-            elif pkg != None: data_list.append(pkg.id_number)
 
-            # print buffer
-            queue_pkgs = []
-            for i in range(len(self.buffer.queue)):
-                queue_pkgs.append(self.buffer.queue[len(self.buffer.queue) - i - 1].id_number)
-            data_list.append(queue_pkgs)
-            data_list.append(self.buffer.calculate_buffer_size())
-
-            # print server 
-            printServerStatus = "-->" if self.server.status == 1 else "None"
-            data_list.append(printServerStatus)
-
-            # print pkg served 
-            if self.server.pkg_serving == None: data_list.append(None)
-            elif self.server.pkg_serving != None: data_list.append(self.server.pkg_serving.id_number)
-            data_list.append(self.server.serving_time)
-            data_list.append(self.server.service_progression)
-            
-            # print sys
-            last_served_pkgs = []
-            for i in range(len(self.pkgs_served)):
-                if i >= 5: break
-                last_served_pkgs.append(self.pkgs_served[len(self.pkgs_served) - i - 1].id_number)
-            data_list.append(len(self.pkgs_served))
-            data_list.append(last_served_pkgs)
-
-            # append to the last index of df that is the len(df)
-            df.loc[len(df)] = data_list
             # --- --- --- end print --- --- ---
 
             # --- --- --- start feedback --- --- ---
@@ -249,15 +203,12 @@ class System():
             else:
                 self.array_P01[1] += 1
             # --- --- --- end feedback --- --- ---
+            
+            print(self.n_pkgs, end="\r")
 
             # increment simulation time 
             self.current_time += 1
         
-        if print_dataframe == True:
-            pd.set_option('display.max_columns', None)
-            pd.set_option('display.max_rows', None)
-            pd.set_option('display.width', 300)  
-            print(df)
 
     def calculate_parameters(self):
         # take the value from the dict of waiting time in the server / queue
@@ -309,10 +260,11 @@ array_P0 = []
 steps = math.floor((max_IA - S) / interval)
 IA = max_IA
 for r in range(steps - 1):
+    np.random.seed(42)
 
     IA -= interval
     n_Rho.append(round((S / IA), 3))
-    print(IA, S / IA)
+    # print(IA, S / IA)
 
     for i in range(n_experiments):
         # unit time for plot 
@@ -396,7 +348,7 @@ for r in range(steps - 1):
         print("Wq: ", round(Wq, 2))
         print("P0: ", round(P0, 2))'''
 
-        print(i)
+        # print(i)
 
         # prints of hist and Ls of 1 experiment
         if print_graphs == True:
