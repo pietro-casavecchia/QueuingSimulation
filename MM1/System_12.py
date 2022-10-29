@@ -19,7 +19,7 @@ interval = 0.5
 print_dataframe = False
 print_graphs = False
 simulation_time = 40000
-n_experiments = 2
+n_experiments = 3
 
 class Package:
     def __init__(self):
@@ -111,7 +111,7 @@ class System():
         # a: how many time there are none and b: how many time there > 0
         self.array_P01 = [0, 0]
 
-        # start simulation
+        # start simulation call
         self.simulation()
 
     def pkg_generation(self):
@@ -149,13 +149,6 @@ class System():
         return pkg 
         
     def simulation(self): 
-
-        '''while (
-            (self.current_time < self.run_time) or 
-            (self.buffer.calculate_buffer_size() > 0) or 
-            (self.server.status != 0)
-            ):'''
-
         # continue the process until all pks are served 
         while (self.current_time < self.run_time):
 
@@ -169,10 +162,6 @@ class System():
             self.server.service(self.buffer, self.pkgs_served)
 
             # --- --- --- end sys call --- --- --- 
-
-            # --- --- --- start print --- --- ---
-
-            # --- --- --- end print --- --- ---
 
             # --- --- --- start feedback --- --- ---
             # Ls Lq
@@ -225,7 +214,7 @@ class System():
         # adjust with adding 1 for mean for missing pks 
         for _ in range(self.n_pkgs - len(array_waitingTime_server)):
             array_waitingTime_server.append(0)
-    
+
 
         return (
             self.array_inter_arrival_time,
@@ -264,7 +253,6 @@ for r in range(steps - 1):
 
     IA -= interval
     n_Rho.append(round((S / IA), 3))
-    # print(IA, S / IA)
 
     for i in range(n_experiments):
         # unit time for plot 
@@ -321,34 +309,6 @@ for r in range(steps - 1):
         Ws_theo = 1 / (Mu_theo - Lambda_theo)
         Wq_theo = Lambda_theo / (Mu_theo * (Mu_theo - Lambda_theo))
         P0_theo = 1 - Rho_theo
-
-        '''print("*** *** Theo Values *** ***")
-        print("avg InterArrival theo: ", avg_exp_generation)
-        print("avg Serving theo: ", avg_exp_serving)
-        print("Lambda theo: ", round(Lambda_theo, 2))
-        print("Mu theo: ", round(Mu_theo, 2))
-        print("Rho theo: ", round(Rho_theo, 2))
-        print("Ls theo: ", round(Ls_theo, 2))
-        print("Lq theo: ", round(Lq_theo, 2))
-        print("Ws theo: ", round(Ws_theo, 2))
-        print("Wq theo: ", round(Wq_theo, 2))
-        print("P0 theo: ", round(P0_theo, 2))
-
-        print("--- --- --- --- --- --- --- --- --- Cry --- --- --- Smile --- --- --- CHAD --- --- --- ;))")
-
-        print("*** *** Experimental Values *** ***")
-        print("avg InterArrival: ", round(avg_interArrival, 2))
-        print("avg serving: ", round(avg_serving, 2))
-        print("Lambda: ", round(Lambda, 2))
-        print("Mu: ", round(Mu, 2))
-        print("Rho: ", round(Rho, 2))
-        print("Ls: ", round(Ls, 2))
-        print("Lq: ", round(Lq, 2))
-        print("Ws: ", round(Ws, 2))
-        print("Wq: ", round(Wq, 2))
-        print("P0: ", round(P0, 2))'''
-
-        # print(i)
 
         # prints of hist and Ls of 1 experiment
         if print_graphs == True:
@@ -457,7 +417,124 @@ for i in range(steps - 1):
     array_Plot_Ws.append(Plot_Ws)
     array_Plot_Wq.append(Plot_Wq)
 
-def quardiPlotLog(
+def LPlotLog(
+    x, 
+    Ls, Ls_e,
+    Lq, Lq_e,
+    name_Ls, name_Ls_e,
+    name_Lq, name_Lq_e):
+    figure, axis = plt.subplots(2, figsize=(4, 7))
+    # Ls
+    axis[0].plot(x, Ls, linewidth=1.0, color=(0, 0, 0), label=name_Ls)
+    axis[0].plot(x, Ls_e, linewidth=1.0, color=(0, 0, 0), linestyle = 'dashed', label=name_Ls_e)
+    axis[0].set_yscale('log')
+    axis[0].grid(linewidth = 0.5)
+    axis[0].legend(loc="best")
+    # Lq
+    axis[1].plot(x, Lq, linewidth=1.0, color=(0, 0, 0), label=name_Lq)
+    axis[1].plot(x, Lq_e, linewidth=1.0, color=(0, 0, 0), linestyle = 'dashed', label=name_Lq_e)
+    axis[1].set_yscale('log')
+    axis[1].grid(linewidth = 0.5)
+    axis[1].legend(loc="best")
+
+    plt.show()
+
+LPlotLog(
+    n_Rho, 
+    array_Plot_Ls, Ls_fnRho,
+    array_Plot_Lq, Lq_fnRho, 
+    "Ls", "Ls exp",
+    "Lq", "Lq exp")
+
+def LPlot(
+    x, 
+    Ls, Ls_e,
+    Lq, Lq_e,
+    name_Ls, name_Ls_e,
+    name_Lq, name_Lq_e):
+    figure, axis = plt.subplots(2, figsize=(4, 7))
+    # Ls
+    axis[0].plot(x, Ls, linewidth=1.0, color=(0, 0, 0), label=name_Ls)
+    axis[0].plot(x, Ls_e, linewidth=1.0, color=(0, 0, 0), linestyle = 'dashed', label=name_Ls_e)
+    axis[0].grid(linewidth = 0.5)
+    axis[0].legend(loc="best")
+    # Lq
+    axis[1].plot(x, Lq, linewidth=1.0, color=(0, 0, 0), label=name_Lq)
+    axis[1].plot(x, Lq_e, linewidth=1.0, color=(0, 0, 0), linestyle = 'dashed', label=name_Lq_e)
+    axis[1].grid(linewidth = 0.5)
+    axis[1].legend(loc="best")
+
+    plt.show()
+
+LPlot(
+    n_Rho, 
+    array_Plot_Ls, Ls_fnRho,
+    array_Plot_Lq, Lq_fnRho, 
+    "Ls", "Ls exp",
+    "Lq", "Lq exp")
+
+def WPlotLog(
+    x, 
+    Ws, Ws_e,
+    Wq, Wq_e,
+    name_Ws, name_Ws_e,
+    name_Wq, name_Wq_e):
+    figure, axis = plt.subplots(2, figsize=(4, 7))
+    # Ws
+    axis[0].plot(x, Ws, linewidth=1.0, color=(0, 0, 0), label=name_Ws)
+    axis[0].plot(x, Ws_e, linewidth=1.0, color=(0, 0, 0), linestyle = 'dashed', label=name_Ws_e)
+    axis[0].set_yscale('log')
+    axis[0].grid(linewidth = 0.5)
+    axis[0].legend(loc="best")
+    # Wq
+    axis[1].plot(x, Wq, linewidth=1.0, color=(0, 0, 0), label=name_Wq)
+    axis[1].plot(x, Wq_e, linewidth=1.0, color=(0, 0, 0), linestyle = 'dashed', label=name_Wq_e)
+    axis[1].set_yscale('log')
+    axis[1].grid(linewidth = 0.5)
+    axis[1].legend(loc="best")
+
+    plt.show()
+
+WPlotLog(
+    n_Rho, 
+    array_Plot_Ws, Ws_fnRho, 
+    array_Plot_Wq, Wq_fnRho, 
+    "Ws", "Ws exp",
+    "Wq", "Wq exp")
+
+def WPlot(
+    x, 
+    Ws, Ws_e,
+    Wq, Wq_e,
+    name_Ws, name_Ws_e,
+    name_Wq, name_Wq_e):
+    figure, axis = plt.subplots(2, figsize=(4, 7))
+    # Ws
+    axis[0].plot(x, Ws, linewidth=1.0, color=(0, 0, 0), label=name_Ws)
+    axis[0].plot(x, Ws_e, linewidth=1.0, color=(0, 0, 0), linestyle = 'dashed', label=name_Ws_e)
+    axis[0].grid(linewidth = 0.5)
+    axis[0].legend(loc="best")
+    # Wq
+    axis[1].plot(x, Wq, linewidth=1.0, color=(0, 0, 0), label=name_Wq)
+    axis[1].plot(x, Wq_e, linewidth=1.0, color=(0, 0, 0), linestyle = 'dashed', label=name_Wq_e)
+    axis[1].grid(linewidth = 0.5)
+    axis[1].legend(loc="best")
+
+    plt.show()
+
+WPlot(
+    n_Rho, 
+    array_Plot_Ws, Ws_fnRho, 
+    array_Plot_Wq, Wq_fnRho, 
+    "Ws", "Ws exp",
+    "Wq", "Wq exp")
+
+
+
+
+
+
+'''def quardiPlotLog(
     x, 
     Ls, Ls_e,
     Lq, Lq_e,
@@ -547,4 +624,4 @@ quardiPlotLin(
     "Ls", "Ls_e",
     "Lq", "Lq_e",
     "Ws", "Ws_e",
-    "Wq", "Wq_e")
+    "Wq", "Wq_e")'''

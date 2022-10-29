@@ -6,15 +6,13 @@ No runtime
 Better calculation W
 '''
 
-from tkinter import TRUE
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
 import math
 
 # costant serving variable
-IA = 10
-S = 5
+IA = 12
+S = 6
 
 # system variables 
 print_dataframe = False
@@ -22,7 +20,7 @@ print_graphs = False
 simulation_time = 4000
 n_experiments = 1
 
-# np.random.seed(4269)
+np.random.seed(4269)
 
 class Package:
     def __init__(self):
@@ -150,19 +148,6 @@ class System():
         return pkg 
         
     def simulation(self):
-        df = pd.DataFrame(columns = [
-            "UT", 
-            "interTime", "genProc", "pkgIdGen", 
-            "queue", "buffDim",
-            "servStatus", "pkgIdServ", "servTime", "servProc",
-            "nPkgsServ", "pkgsServed"])      
-        
-        '''while (
-            (self.current_time < self.run_time) or 
-            (self.buffer.calculate_buffer_size() > 0) or 
-            (self.server.status != 0)
-            ):'''
-
         # continue the process until all pks are served 
         while (self.current_time < self.run_time):
 
@@ -180,40 +165,6 @@ class System():
             # server call
             self.server.service(self.buffer, self.pkgs_served)
             # --- --- --- end sys call --- --- --- 
-
-            # --- --- --- start print df --- --- ---
-            # print pkg
-            if pkg == None: data_list.append(None)
-            elif pkg != None: data_list.append(pkg.id_number)
-
-            # print buffer
-            queue_pkgs = []
-            for i in range(len(self.buffer.queue)):
-                queue_pkgs.append(self.buffer.queue[len(self.buffer.queue) - i - 1].id_number)
-            data_list.append(queue_pkgs)
-            data_list.append(self.buffer.calculate_buffer_size())
-
-            # print server 
-            printServerStatus = "-->" if self.server.status == 1 else "None"
-            data_list.append(printServerStatus)
-
-            # print pkg served 
-            if self.server.pkg_serving == None: data_list.append(None)
-            elif self.server.pkg_serving != None: data_list.append(self.server.pkg_serving.id_number)
-            data_list.append(self.server.serving_time)
-            data_list.append(self.server.service_progression)
-            
-            # print sys
-            last_served_pkgs = []
-            for i in range(len(self.pkgs_served)):
-                if i >= 5: break
-                last_served_pkgs.append(self.pkgs_served[len(self.pkgs_served) - i - 1].id_number)
-            data_list.append(len(self.pkgs_served))
-            data_list.append(last_served_pkgs)
-
-            # append to the last index of df that is the len(df)
-            df.loc[len(df)] = data_list
-            # --- --- --- end print df --- --- ---
 
             # --- --- --- start feedback --- --- ---
             # Ls Lq
@@ -247,12 +198,6 @@ class System():
 
             # increment simulation time 
             self.current_time += 1
-        
-        if print_dataframe == True:
-            pd.set_option('display.max_columns', None)
-            pd.set_option('display.max_rows', None)
-            pd.set_option('display.width', 65)  
-            print(df)
 
     def calculate_parameters(self):
         # take the value from the dict of waiting time in the server / queue
@@ -403,41 +348,62 @@ for i in range(n_experiments):
         plt.grid(linewidth = 0.5)
         plt.show()
 
-    # --- --- --- out avg result for n experiment --- --- ---
 
-    out_IA = round(np.mean(array_IA), 3)
-    out_S = round(np.mean(array_S), 3)
-    out_Lambda = round(np.mean(array_Lambda), 3)
-    out_Mu = round(np.mean(array_Mu), 3)
-    out_Rho = round(np.mean(array_Rho), 3)
-    out_Ls = round(np.mean(array_Ls), 3) 
-    out_Lq = round(np.mean(array_Lq), 3) 
-    out_Ws = round(np.mean(array_Ws), 3)
-    out_Wq = round(np.mean(array_Wq), 3) 
-    out_P0 = round(np.mean(array_P0), 3) 
+# --- --- --- out avg result for n experiment --- --- ---
 
-    # calculate percentage error 
-    error_IA = math.floor(-(IA - out_IA) / IA * 100)
-    error_S = math.floor(-(S - out_S) / S * 100)
-    error_Lambda = math.floor(-(Lambda_theo - out_Lambda) / Lambda_theo * 100)
-    error_Mu = math.floor(-(Mu_theo - out_Mu) / Mu_theo * 100)
-    error_Rho = math.floor(-(Rho_theo - out_Rho) / Rho_theo * 100)
-    error_Ls = math.floor(-(Ls_theo - out_Ls) / Ls_theo * 100)
-    error_Lq = math.floor(-(Lq_theo - out_Lq) / Lq_theo * 100)
-    error_Ws = math.floor(-(Ws_theo - out_Ws) / Ws_theo * 100)
-    error_Wq = math.floor(-(Wq_theo - out_Wq) / Wq_theo * 100)
-    error_P0 = math.floor(-(P0_theo - out_P0) / P0_theo * 100)
+out_IA = round(np.mean(array_IA), 3)
+out_S = round(np.mean(array_S), 3)
+out_Lambda = round(np.mean(array_Lambda), 3)
+out_Mu = round(np.mean(array_Mu), 3)
+out_Rho = round(np.mean(array_Rho), 3)
+out_Ls = round(np.mean(array_Ls), 3) 
+out_Lq = round(np.mean(array_Lq), 3) 
+out_Ws = round(np.mean(array_Ws), 3)
+out_Wq = round(np.mean(array_Wq), 3) 
+out_P0 = round(np.mean(array_P0), 3) 
 
-    print("IA theo: {} IA out: {} error: {}".format(IA, out_IA, error_IA))
-    print("S theo: {} S out: {} error: {}".format(S, out_S, error_S))
-    print("Lambda theo: {} Lambda out: {} error: {}".format(round(Lambda_theo, 3), out_Lambda, error_Lambda))
-    print("Mu theo: {} Mu out: {} error: {}".format(round(Mu_theo, 3), out_Mu, error_Mu))
-    print("Rho theo: {} Rho out: {} error: {}".format(round(Rho_theo, 3), out_Rho, error_Rho))
-    print("Ls theo: {} Ls out: {} error: {}".format(round(Ls_theo, 3), out_Ls, error_Ls))
-    print("Lq theo: {} Lq out: {} error: {}".format(round(Lq_theo, 3), out_Lq, error_Lq))
-    print("Ws theo: {} Ws out: {} error: {}".format(round(Ws_theo, 3), out_Ws, error_Ws))
-    print("Wq theo: {} Wq out: {} error: {}".format(round(Wq_theo, 3), out_Wq, error_Wq))
-    print("P0 theo: {} P0 out: {} error: {}".format(round(P0_theo, 3), out_P0, error_P0))
+# calculate percentage error 
+error_IA = math.floor(-(IA - out_IA) / IA * 100)
+error_S = math.floor(-(S - out_S) / S * 100)
+error_Lambda = math.floor(-(Lambda_theo - out_Lambda) / Lambda_theo * 100)
+error_Mu = math.floor(-(Mu_theo - out_Mu) / Mu_theo * 100)
+error_Rho = math.floor(-(Rho_theo - out_Rho) / Rho_theo * 100)
+error_Ls = math.floor(-(Ls_theo - out_Ls) / Ls_theo * 100)
+error_Lq = math.floor(-(Lq_theo - out_Lq) / Lq_theo * 100)
+error_Ws = math.floor(-(Ws_theo - out_Ws) / Ws_theo * 100)
+error_Wq = math.floor(-(Wq_theo - out_Wq) / Wq_theo * 100)
+error_P0 = math.floor(-(P0_theo - out_P0) / P0_theo * 100)
+
+print("IA theo: {} IA out: {} error: {}".format(IA, out_IA, error_IA))
+print("S theo: {} S out: {} error: {}".format(S, out_S, error_S))
+print("Lambda theo: {} Lambda out: {} error: {}".format(round(Lambda_theo, 3), out_Lambda, error_Lambda))
+print("Mu theo: {} Mu out: {} error: {}".format(round(Mu_theo, 3), out_Mu, error_Mu))
+print("Rho theo: {} Rho out: {} error: {}".format(round(Rho_theo, 3), out_Rho, error_Rho))
+print("Ls theo: {} Ls out: {} error: {}".format(round(Ls_theo, 3), out_Ls, error_Ls))
+print("Lq theo: {} Lq out: {} error: {}".format(round(Lq_theo, 3), out_Lq, error_Lq))
+print("Ws theo: {} Ws out: {} error: {}".format(round(Ws_theo, 3), out_Ws, error_Ws))
+print("Wq theo: {} Wq out: {} error: {}".format(round(Wq_theo, 3), out_Wq, error_Wq))
+print("P0 theo: {} P0 out: {} error: {}".format(round(P0_theo, 3), out_P0, error_P0))
+
+# mantenendo un Rho costante e cambiando k 
+Pk_theo = []
+Pk = []
+k = []
+for i in range(15):
+    k.append(i)
+    Pk_theo.append(P0_theo * (Rho_theo ** i))
+    Pk.append(out_P0 * (out_Rho ** i))
+print(k)
+print(Pk_theo)
+print(Pk)
+
+plt.plot(k, Pk_theo, linewidth=1.0, color=(0, 0, 0), label="Pk")
+plt.plot(k, Pk, linewidth=1.0, color=(0, 0, 0), linestyle = 'dashed', label="Pk exp")
+plt.ylabel("Pk")
+plt.xlabel("k")
+plt.grid(linewidth = 0.5)
+plt.legend(loc="best")
+plt.show()
 
 
 

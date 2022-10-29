@@ -1,0 +1,27 @@
+\contentsline {section}{\numberline {1}Obbiettivo}{3}{}%
+\contentsline {section}{\numberline {2}Struttura}{3}{}%
+\contentsline {subsection}{\numberline {2.1}Funzione delle Classi}{3}{}%
+\contentsline {subsection}{\numberline {2.2}Tempo nella Simulazione}{3}{}%
+\contentsline {section}{\numberline {3}Codice}{4}{}%
+\contentsline {subsection}{\numberline {3.1}Class Package}{4}{}%
+\contentsline {subsection}{\numberline {3.2}Class Buffer}{4}{}%
+\contentsline {subsection}{\numberline {3.3}Class Server init}{4}{}%
+\contentsline {subsection}{\numberline {3.4}Server Methods}{5}{}%
+\contentsline {subsection}{\numberline {3.5}Class System init}{6}{}%
+\contentsline {subsection}{\numberline {3.6}System Method Pkg Generation}{6}{}%
+\contentsline {subsection}{\numberline {3.7}System Method Simulation}{7}{}%
+\contentsline {subsection}{\numberline {3.8}System Method Parameters}{10}{}%
+\contentsline {section}{\numberline {4}Sezione della Simulazione}{11}{}%
+\contentsline {subsection}{\numberline {4.1}Grafici Pkgs nel Sistema per Unità di Tempo}{12}{}%
+\contentsline {section}{\numberline {5}Parametri del Sistema}{13}{}%
+\contentsline {subsection}{\numberline {5.1}Equazioni}{13}{}%
+\contentsline {subsection}{\numberline {5.2}Esempio Output con $\lambda $ e $\mu $ Fissati}{14}{}%
+\contentsline {subsection}{\numberline {5.3}Parametro P}{14}{}%
+\contentsline {subsection}{\numberline {5.4}Output con Variazione di $\rho $}{15}{}%
+\contentsline {subsection}{\numberline {5.5}Parametro W}{15}{}%
+\contentsline {subsection}{\numberline {5.6}Parametro L}{16}{}%
+\contentsline {section}{\numberline {6}Considerazioni}{17}{}%
+\contentsline {subsection}{\numberline {6.1}Scarto dello Zero}{17}{}%
+\contentsline {subsection}{\numberline {6.2}Osservazione della Simulazione}{17}{}%
+\contentsline {subsection}{\numberline {6.3}Lungezza della Simulazione}{17}{}%
+\contentsline {subsection}{\numberline {6.4}Errore in funzione di Rho}{17}{}%
