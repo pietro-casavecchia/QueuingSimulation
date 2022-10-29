@@ -72,12 +72,12 @@
 
 \raggedright
 \noindent
-\section{Obbiettivo}
-L'obbiettivo è quello di simulare il sistema a coda MM1. \\
+\section{Obiettivo}
+L'obiettivo è quello di simulare il sistema a coda MM1. \\
 Si è cercato di rimanere fedeli al reale funzionamento cercando di interpretare il significato fisico delle componenti del sistema e implementare i funzionamenti in modo da potere essere vicini ad una rappresentazione reale.
 
 \section{Struttura}
-Il progrmma è stutturato in classi corrispondenti agli oggetti del sistema che sono:
+Il programma è stutturato in classi corrispondenti agli oggetti del sistema che sono:
 \begin{itemize}
   \item Class Package
   \item Class Buffer
@@ -86,7 +86,7 @@ Il progrmma è stutturato in classi corrispondenti agli oggetti del sistema che 
 \end{itemize}
 
 \subsection{Funzione delle Classi}
-L'obbiettivo delle Classi Package, Buffer e Server è quello di creare, nel caso del pacchetto più istanze quindi più oggetti definiti come pacchetti mentre le altre due Classi sono chiamate solo una volta così da creare un oggetto che rappresenti una Buffer e un Server.
+L'obiettivo delle Classi Package, Buffer e Server è quello di creare, nel caso del pacchetto più istanze quindi più oggetti definiti come pacchetti mentre le altre due Classi sono chiamate solo una volta così da creare un oggetto che rappresenti un Buffer e un Server.
 \bigbreak
 La Classe System rappresenta l'intero sistema, gestisce le altre classi e nel caso del Buffer e del Server li chiama una volta sola, mentre chiama la Classe Package ogni volta che un nuovo pacchetto si deve generare. \\
 Inoltre System genera i pacchetti, siccome un Metodo di generazione nella Classe Package non avrebbe senso perchè sarebbe legato a tutti i pacchetti, mentre è necessario avere un Metodo di generazione che comprenda tutti i Pacchetti quindi deve essere un Metodo della Classe System.
@@ -437,11 +437,11 @@ Il primo rappresenta la sezione fino a 15ut, invece il secondo una simulazione c
 
 \newpage
 \section{Parametri del Sistema}
-Vengono calcolati i parametri teorici usando le seguenti equazioni, poi vengono calcolati i parametri sperimentali, concretizzando il significato pratico delle equazioni mettendo degli appositi Flag nella simulazione, cosi da avere per ogni parametro teorico il corrispettivo sperimentale. \\
+Vengono calcolati i parametri teorici usando le seguenti equazioni, poi vengono calcolati i parametri sperimentali, concretizzando il significato pratico delle equazioni mettendo degli appositi Flag nella simulazione, così da avere per ogni parametro teorico il corrispettivo sperimentale. \\
 Viene calcolato anche $\lambda$ e $\mu$ sperimentale osservando il Tempo di Interarrivo (IA) e il Tempo di Servizio (S) generati dalle opportune distribuzioni esponenziali. 
 
 \subsection{Equazioni}
-Dato il Tempo di Interarrivo: IA e il Tempo di Servizio S:
+Dato il Tempo di Interarrivo, IA e il Tempo di Servizio, S :
 \begin{align*}
 \lambda  &= \frac{1}{IA} & 
 \mu &= \frac{1}{S}
@@ -453,7 +453,7 @@ Steady State:
 \mu_k &= \mu
 \end{align*}
 
-Fattore di utilizzo o percentuale del tempo che tutti i Servers sono accupati: 
+Fattore di utilizzo o percentuale del tempo che tutti i Servers sono occupati: 
 \begin{align*}
 \rho &= \frac{\lambda}{\mu} & 
 \rho &= 1 - P_0
@@ -499,6 +499,13 @@ Wq theo: 1.852 Wq out: 2.015 error: 8
 P0 theo: 0.73 P0 out: 0.732 error: 0
 \end{lstlisting}
 
+\subsection{Parametro P}
+Grafico teorico e sperimentale dell'andamento di $Pk$ in funzione di $k$ tenendo $\rho$ costante, il massimo $k$ in questo caso si è scelto arbitrariamente per semplicià ma si potrebbe scegliere il massimo $k$ osservato nella simulazione.
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.6]{Pk}
+\end{figure}
+
 \newpage
 \subsection{Output con Variazione di $\rho$}
 Si è fissato il Tempo di Servizio e si è fatto variare in modo incrementale il Tempo di Interarrivo mantenendo sempre valida la relazione:
@@ -522,12 +529,6 @@ Grafico teorico e sperimentale dell'andamento di $L_S$ e $L_q$ in funzione di $\
 \includegraphics[scale=0.8]{L}
 \end{figure}
 
-\subsection{Parametro P}
-Grafico teorico e sperimentale dell'andamento di $Pk$ in funzione di $k$ tenendo $\rho$ costante, il massimo $k$ in questo caso si è scelto arbitrariamente per semplicià ma si potrebbe scegliere il massimo $k$ osservato nella simulazione.
-\begin{figure}[h]
-\centering
-\includegraphics[scale=0.8]{Pk}
-\end{figure}
 
 \newpage
 \section{Considerazioni}
@@ -537,10 +538,10 @@ Usando appropriate distribuzioni esponenziali per la generazione di $\lambda$ e 
 \subsection{Osservazione della Simulazione}
 Il tempo di osservazione della simulazione parte da un tempo $t=0$ e finisce in un tempo $t=end$ quindi non si ferma la generazione dei Pkgs e poi si aspetta il loro servizio ma si smette di osservare il sistema quando ancora i Pkgs si stanno generando.
 Più $\rho$ è piccolo più la differenza tra questi due approcci è meno significativa perchè c'è meno utilizzo dei Server e quindi meno Pkgs da servire dopo la fine della generazione.
-\subsection{Lungezza della Simulazione}
+\subsection{Lunghezza della Simulazione}
 Più la simulazione è lunga in UT più si da spazio a tempi di generazione e servizio più lunghi.
-\subsection{Errore in funzione di Rho}
-Più $\rho$ è grande più l'errore aumenta.
+\subsection{Errore in funzione di $\rho$}
+Più $\rho$ è grande più l'errore su i parametri aumenta.
 
 
 \newpage

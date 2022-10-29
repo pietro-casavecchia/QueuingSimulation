@@ -1,4 +1,4 @@
-\contentsline {section}{\numberline {1}Obbiettivo}{3}{}%
+\contentsline {section}{\numberline {1}Obiettivo}{3}{}%
 \contentsline {section}{\numberline {2}Struttura}{3}{}%
 \contentsline {subsection}{\numberline {2.1}Funzione delle Classi}{3}{}%
 \contentsline {subsection}{\numberline {2.2}Tempo nella Simulazione}{3}{}%
@@ -23,5 +23,5 @@
 \contentsline {section}{\numberline {6}Considerazioni}{17}{}%
 \contentsline {subsection}{\numberline {6.1}Scarto dello Zero}{17}{}%
 \contentsline {subsection}{\numberline {6.2}Osservazione della Simulazione}{17}{}%
-\contentsline {subsection}{\numberline {6.3}Lungezza della Simulazione}{17}{}%
-\contentsline {subsection}{\numberline {6.4}Errore in funzione di Rho}{17}{}%
+\contentsline {subsection}{\numberline {6.3}Lunghezza della Simulazione}{17}{}%
+\contentsline {subsection}{\numberline {6.4}Errore in funzione di $\rho $}{17}{}%
