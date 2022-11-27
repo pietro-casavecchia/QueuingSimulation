@@ -13,13 +13,13 @@ import numpy as np
 import math
 
 # costant serving variable
-IA = 10
-S = 5
+IA = 6
+S = 4
 
 # system variables 
-print_dataframe = False
-print_graphs = False
-simulation_time = 4000
+print_dataframe = True
+print_graphs = True
+simulation_time = 100
 n_experiments = 1
 
 # np.random.seed(4269)
@@ -251,7 +251,8 @@ class System():
         if print_dataframe == True:
             pd.set_option('display.max_columns', None)
             pd.set_option('display.max_rows', None)
-            pd.set_option('display.width', 65)  
+            # pd.set_option('display.width', 65)  
+            pd.set_option('display.width', 300)  
             print(df)
 
     def calculate_parameters(self):
